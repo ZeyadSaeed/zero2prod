@@ -45,6 +45,7 @@ pub async fn subscribe(form: web::Form<FormData>, pool: web::Data<PgPool>) -> Ht
     name = "Saving new subscriber details in the database.",
     skip(new_subscriber, pool)
 )]
+#[allow(clippy::async_yields_async)]
 pub async fn insert_subscriber(
     pool: &PgPool,
     new_subscriber: &NewSubscriber,
