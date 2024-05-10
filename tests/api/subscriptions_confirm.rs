@@ -71,3 +71,21 @@ async fn clicking_on_the_confirmation_link_confirms_a_subscriber() {
     assert_eq!(saved.name, "le guin");
     assert_eq!(saved.status, "confirmed");
 }
+
+#[tokio::test]
+async fn confirmation_fails_when_there_is_no_user_with_associated_token() {
+    // Arrange
+    let app = spawn_app().await;
+    let body = "name=le%20guin&email=ursula_le_guin%40gmail.com";
+
+    app.post_subscriptions(body.into()).await;
+    let invalid_link = format!(
+        "{}/subscriptions/confirm?subscription_token=invalid_token",
+        app.address
+    );
+
+    // Act
+    let response = reqwest::get(invalid_link).await.unwrap();
+
+    assert_eq!(response.status().as_u16(), 401);
+}
